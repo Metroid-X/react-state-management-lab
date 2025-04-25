@@ -5,6 +5,7 @@ import './App.css';
 const App = () => {
   const [team, setTeam] = useState([]);
   const [money, setMoney] = useState(100);
+  const [message, setMessage] = useState('');
   const [zombieFighters, setZombieFighters] = useState([
       {
         id: 1,
@@ -93,16 +94,31 @@ const App = () => {
   let teamAgility = 0
 
   const handleAddFighter = (fighter) => {
-    if(money > fighter.price) {
+    if (money >= fighter.price) {
       setTeam([...team, fighter]);
       setMoney(money-fighter.price);
+      setMessage('');
+    } else {
+      setMessage('Not enough money to hire this fighter.');
+      setSrollPosition(0);
     };
-  }
+  };
+
+  const handleRemFighter = (member, index) => {
+    const teamAfterRemoved = team.filter((m,i)=>{
+      return i !== index
+    });
+    console.log(teamAfterRemoved);
+    setTeam([...teamAfterRemoved]);
+    setMoney(money+member.price);
+  };
 
   team.forEach((member)=>{
-    teamStrength+=member.strength;
-    teamAgility+=member.agility;
+    teamStrength+=member?.strength;
+    teamAgility+=member?.agility;
   });
+
+  console.log(team);
 
   return (
     <>
@@ -115,15 +131,17 @@ const App = () => {
         {team.map((member, index) => {
           return (
             <li key={index}>
-              <img src={String(member.img)} alt={member.id} />
+              <img src={String(member?.img)} alt={member?.id} />
               <br/><sup>Member {index+1}</sup>
-              <br/><strong>{member.name}</strong>
-              <br/><sub>Strength: {member.strength}</sub>
-              <br/><sub>Agility: {member.agility}</sub>
+              <br/><strong>{member?.name}</strong>
+              <br/><sub>Strength: {member?.strength}</sub>
+              <br/><sub>Agility: {member?.agility}</sub>
+              <br /><br /><button onClick={() => handleRemFighter(member, index)}>Remove</button>
             </li>
           );
         })}
       </ul>
+      <p>{message}</p>
       <sub>Pick some team members</sub>
       <ul>
         {zombieFighters.map((fighter, index) => {
